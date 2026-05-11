@@ -6,7 +6,7 @@ const dark = useDark();
 </script>
 
 <template>
-	<main class="w-full m-h-full flex items-center justify-center">
+	<main class="w-full min-h-full flex items-center justify-center">
 		<router-view />
 	</main>
 	<Footer />
