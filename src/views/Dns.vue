@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { h, ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useAccountsStore } from '@/stores/accountsStore';
 import { req } from '@/lib/request';
 import { useDebounceFn } from '@vueuse/core';
@@ -96,6 +96,7 @@ interface DnsFormData {
 }
 
 const accountsStore = useAccountsStore();
+const route = useRoute();
 const router = useRouter();
 
 const loading = ref(false);
@@ -407,6 +408,10 @@ const toggleProxy = async (record: DnsRecord) => {
 onMounted(() => {
 	if (!accountsStore.current) {
 		router.push('/login?redirect=/dns');
+		return;
+	}
+	if ('add' in route.query) {
+		openAddDialog();
 		return;
 	}
 	fetchDnsRecords();

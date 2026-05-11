@@ -271,7 +271,7 @@ onMounted(() => {
 					<CardDescription>常用的管理操作</CardDescription>
 				</CardHeader>
 				<CardContent class="grid gap-2">
-					<Button variant="outline" class="justify-start" @click="router.push('/dns')">
+					<Button variant="outline" class="justify-start" @click="router.push('/dns?add')">
 						<ServerIcon class="mr-2 h-4 w-4" />
 						添加 DNS 记录
 					</Button>
