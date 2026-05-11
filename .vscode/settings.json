@@ -1,0 +1,20 @@
+{
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "tsconfig.json": "tsconfig.*.json, components.d.ts, env.d.ts",
+    "vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*, tailwind.config.*, components.json",
+    "package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .oxlint*, oxlint*, .oxfmt*, .prettier*, prettier*, .editorconfig"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+  "js/ts.preferences.autoImportFileExcludePatterns": [
+    "lucide-react", // or
+    "lucide-preact", // or
+    "lucide-react-native", // or
+    "@lucide/vue",
+  ],
+  "files.associations": {
+    "*.css": "tailwindcss"
+  }
+}
