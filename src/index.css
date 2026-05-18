@@ -5,10 +5,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@theme {
-  --animate-shake-x: shake-x 0.2s ease-in-out;
-}
-
 @theme inline {
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -116,18 +112,6 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
-}
-
-@keyframes shake-x {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-10px);
-  }
-  50% {
-    transform: translateX(10px);
-  }
 }
 
 @layer base {
