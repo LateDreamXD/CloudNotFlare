@@ -20,7 +20,7 @@ const deployedInfo = computed(() => {
 					Preview
 				</span>
 			</p>
-			<p class="text-sm text-gray-500 dark:text-gray-400 *:not-last:pr-2 *:not-last:border-r-2 *:not-last:border-border">
+			<p class="text-sm text-gray-500 dark:text-gray-400 *:not-last:pr-2 *:not-first:ml-2 *:not-last:border-r-2 *:not-last:border-border">
 				<span>
 					&copy; 2026 <a class="text-primary hover:underline" href="https://github.com/LateDreamXD">LateDreamXD</a>
 				</span>
