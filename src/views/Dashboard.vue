@@ -1,6 +1,20 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { reactive, ref, computed, onMounted, watch } from 'vue';
 import { Button } from '@/components/ui/button';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuPortal,
+	DropdownMenuSeparator,
+	DropdownMenuShortcut,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
 	Card,
 	CardContent,
@@ -9,12 +23,20 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import {
 	Alert,
 	AlertDescription,
 	AlertTitle,
 } from '@/components/ui/alert';
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '@/components/ui/dialog';
 import {
 	AlertCircleIcon,
 	Loader2Icon,
@@ -23,10 +45,14 @@ import {
 	GlobeIcon,
 	ActivityIcon,
 	ArrowUpRightIcon,
-	ArrowDownRightIcon,
+	MoreHorizontalIcon,
+	UserPlus2Icon,
+	Users2Icon,
+	LogOutIcon
 } from 'lucide-vue-next';
 import { useAccountsStore } from '@/stores/accountsStore';
 import { req } from '@/lib/request';
+import { open as openWindow } from '@/lib/window';
 import { useRouter } from 'vue-router';
 
 const accountsStore = useAccountsStore();
@@ -53,6 +79,16 @@ interface DnsRecord {
 	proxied: boolean;
 	created_on: string;
 }
+
+const dialogState = reactive<{
+	open: boolean;
+	event: string;
+	confirm: Function;
+}>({
+	open: false,
+	event: '',
+	confirm: () => {}
+});
 
 const loading = ref(false);
 const error = ref('');
@@ -124,6 +160,12 @@ const getStatusColor = (status: string) => {
 	}
 };
 
+const updateDialogState = (event: string, confirm?: Function) => {
+	dialogState.event = event;
+	if(confirm) dialogState.confirm = confirm;
+	dialogState.open = true;
+};
+
 onMounted(() => {
 	if (!accountsStore.current) {
 		router.push('/login?redirect=/dashboard');
@@ -131,6 +173,13 @@ onMounted(() => {
 	}
 	fetchZoneInfo();
 	fetchDnsRecords();
+
+	watch(currentAccountName, (newVal) => {
+		if (newVal) {
+			fetchZoneInfo();
+			fetchDnsRecords();
+		}
+	});
 });
 </script>
 
@@ -141,10 +190,48 @@ onMounted(() => {
 				<h1 class="text-3xl font-bold tracking-tight">仪表盘</h1>
 				<p class="text-muted-foreground">欢迎回来！{{ currentAccountName }}</p>
 			</div>
-			<Button @click="fetchZoneInfo(); fetchDnsRecords();" :disabled="loading">
-				<Loader2Icon v-if="loading" class="mr-2 h-4 w-4 animate-spin" />
-				刷新数据
-			</Button>
+			<div class="flex gap-4">
+				<DropdownMenu>
+					<DropdownMenuTrigger as-child>
+						<Button variant="outline">
+							切换用户
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent class="w-fit" align="start">
+						<DropdownMenuLabel>用户</DropdownMenuLabel>
+						<DropdownMenuGroup>
+							<DropdownMenuItem v-for="(account, name) in accountsStore.accountList" :key="account.username || name"
+								@click="accountsStore.setCurrent(name)" :disabled="name === currentAccountName">
+								{{ account.username || name }} {{ (account.username || name) === currentAccountName ? '(当前用户)' : '' }}
+							</DropdownMenuItem>
+						</DropdownMenuGroup>
+						<DropdownMenuSeparator />
+						<DropdownMenuLabel>管理</DropdownMenuLabel>
+						<DropdownMenuGroup>
+							<DropdownMenuSub>
+								<DropdownMenuSubTrigger class="gap-2">
+									<MoreHorizontalIcon class="h-4 w-4" />更多操作
+								</DropdownMenuSubTrigger>
+								<DropdownMenuSubContent>
+									<DropdownMenuItem @click="openWindow('/login?add', {width: 800, height: 600}, true)">
+										<UserPlus2Icon /> 添加新用户
+									</DropdownMenuItem>
+									<DropdownMenuItem @click="router.push('/usercenter')">
+										<Users2Icon /> 打开管理中心
+									</DropdownMenuItem>
+								</DropdownMenuSubContent>
+							</DropdownMenuSub>
+							<DropdownMenuItem class="text-red-600 dark:text-red-400" @click="updateDialogState('退出当前用户', () => accountsStore.removeAccount(currentAccountName))">
+								<LogOutIcon /> 退出当前用户
+							</DropdownMenuItem>
+						</DropdownMenuGroup>
+					</DropdownMenuContent>
+				</DropdownMenu>
+				<Button @click="fetchZoneInfo(); fetchDnsRecords();" :disabled="loading">
+					<Loader2Icon v-if="loading" class="mr-2 h-4 w-4 animate-spin" />
+					刷新数据
+				</Button>
+			</div>
 		</div>
 
 		<Alert v-if="error" variant="destructive">
@@ -152,6 +239,19 @@ onMounted(() => {
 			<AlertTitle>出错了</AlertTitle>
 			<AlertDescription>{{ error }}</AlertDescription>
 		</Alert>
+
+		<Dialog v-model:open="dialogState.open">
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle>二次确认</DialogTitle>
+					<DialogDescription>确认要{{ dialogState.event }}吗？操作将无法撤销。</DialogDescription>
+				</DialogHeader>
+				<DialogFooter>
+					<Button variant="destructive" @click="dialogState.confirm">确认</Button>
+					<Button @click="dialogState.open = false">取消</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
 
 		<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
 			<Card>
@@ -183,7 +283,7 @@ onMounted(() => {
 				</CardHeader>
 				<CardContent>
 					<div class="text-2xl font-bold">
-						{{ dnsRecords.filter(r => r.proxied).length }}
+						{{dnsRecords.filter(r => r.proxied).length}}
 					</div>
 					<p class="text-xs text-muted-foreground">条记录已代理</p>
 				</CardContent>

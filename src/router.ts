@@ -21,6 +21,11 @@ const routes: RouteRecordRaw[] = [
 		name: 'dns',
 		component: () => import('@/views/Dns.vue')
 	},
+	{
+		path: '/usercenter',
+		name: 'usercenter',
+		component: () => import('@/views/UserCenter.vue')
+	}
 ];
 
 export default createRouter({
