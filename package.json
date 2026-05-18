@@ -16,12 +16,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-		"@floating-ui/vue": "^1.1.1",
-		"@tanstack/vue-table": "^8.21.3",
+    "@floating-ui/vue": "^1.1.1",
+    "@tanstack/vue-table": "^8.21.3",
     "@vueuse/core": "^14.3.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "lucide-vue-next": "^1.0.0",
+    "lucide-vue-next": "npm:@lucide/vue@^1.16.0",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",
     "reka-ui": "^2.9.7",

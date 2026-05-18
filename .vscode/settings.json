@@ -13,6 +13,7 @@
     "lucide-preact", // or
     "lucide-react-native", // or
     "@lucide/vue",
+    "src/components/ui/*.vue"
   ],
   "files.associations": {
     "*.css": "tailwindcss"

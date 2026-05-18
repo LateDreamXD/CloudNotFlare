@@ -18,6 +18,7 @@ export default defineConfig({
 			}
 		}
 	},
+	envPrefix: ['VITE_', 'VERCEL_'],
 	plugins: [vue(), tailwindcss()],
 	resolve: {
 		alias: {
