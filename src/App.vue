@@ -6,7 +6,9 @@ const dark = useDark();
 </script>
 
 <template>
-	<main class="w-full min-h-full flex items-center justify-center">
+	<main class="w-full min-h-full" :class="{
+		'flex items-center justify-center': $route.name === 'login'
+	}">
 		<router-view />
 	</main>
 	<Footer />

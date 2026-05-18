@@ -1,5 +1,5 @@
 <template>
-	<footer class="sticky top-[100vh] w-full bg-gray-100/20 dark:bg-gray-800/20 p-4 flex items-center justify-between">
+	<footer class="sticky bottom-0 w-full bg-gray-100/20 dark:bg-gray-800/20 p-4 flex items-center justify-between">
 		<div>
 			<p class="font-bold mb-2">
 				CloudNotFlare
