@@ -6,7 +6,7 @@ const deployedInfo = computed(() => {
 	const commit = import.meta.env.VERCEL_GIT_COMMIT_SHA;
 	return {
 		commit: commit? commit.slice(0, 7): null,
-		url: `https://github.com/${repository.split(':')[1].split('.')[0]}/commit/${commit}}`
+		url: `https://github.com/${repository.split(':')[1].split('.')[0]}/commit/${commit}`
 	}
 });
 </script>
