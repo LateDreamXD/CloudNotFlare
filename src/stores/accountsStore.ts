@@ -47,6 +47,7 @@ export const useAccountsStore = defineStore('accounts', {
 	getters: {
 		num: (state) => state._num++,
 		currentAccount: (state) => state.list[state.current],
+		currentAccountName: (state) => state.current,
 		accountList: (state) => state.list,
 	},
 	persist: true,

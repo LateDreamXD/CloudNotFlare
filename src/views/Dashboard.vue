@@ -58,19 +58,9 @@ const loading = ref(false);
 const error = ref('');
 const zoneInfo = ref<ZoneInfo | null>(null);
 const dnsRecords = ref<DnsRecord[]>([]);
-const searchQuery = ref('');
 
 const currentAccount = computed(() => accountsStore.currentAccount);
-
-const filteredRecords = computed(() => {
-	if (!searchQuery.value) return dnsRecords.value;
-	const q = searchQuery.value.toLowerCase();
-	return dnsRecords.value.filter(r =>
-		r.name.toLowerCase().includes(q) ||
-		r.type.toLowerCase().includes(q) ||
-		r.content.toLowerCase().includes(q)
-	);
-});
+const currentAccountName = computed(() => accountsStore.currentAccountName);
 
 const fetchZoneInfo = async () => {
 	if (!currentAccount.value) return;
@@ -134,17 +124,6 @@ const getStatusColor = (status: string) => {
 	}
 };
 
-const getTypeColor = (type: string) => {
-	const colors: Record<string, string> = {
-		A: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
-		AAAA: 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300',
-		CNAME: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
-		MX: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300',
-		TXT: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
-	};
-	return colors[type] || 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300';
-};
-
 onMounted(() => {
 	if (!accountsStore.current) {
 		router.push('/login?redirect=/dashboard');
@@ -160,7 +139,7 @@ onMounted(() => {
 		<div class="flex items-center justify-between">
 			<div>
 				<h1 class="text-3xl font-bold tracking-tight">仪表盘</h1>
-				<p class="text-muted-foreground">欢迎回来！</p>
+				<p class="text-muted-foreground">欢迎回来！{{ currentAccountName }}</p>
 			</div>
 			<Button @click="fetchZoneInfo(); fetchDnsRecords();" :disabled="loading">
 				<Loader2Icon v-if="loading" class="mr-2 h-4 w-4 animate-spin" />
@@ -286,60 +265,5 @@ onMounted(() => {
 				</CardContent>
 			</Card>
 		</div>
-
-		<Card>
-			<CardHeader>
-				<div class="flex items-center justify-between">
-					<div>
-						<CardTitle>DNS 记录</CardTitle>
-						<CardDescription>最近添加的 DNS 记录</CardDescription>
-					</div>
-					<Input
-						v-model="searchQuery"
-						placeholder="搜索记录..."
-						class="max-w-xs"
-					/>
-				</div>
-			</CardHeader>
-			<CardContent>
-				<div v-if="loading" class="flex items-center justify-center py-8">
-					<Loader2Icon class="h-8 w-8 animate-spin text-muted-foreground" />
-				</div>
-				<div v-else-if="filteredRecords.length === 0" class="text-center py-8 text-muted-foreground">
-					<p>暂无 DNS 记录</p>
-				</div>
-				<div v-else class="space-y-2">
-					<div
-						v-for="record in filteredRecords"
-						:key="record.id"
-						class="flex items-center justify-between p-3 rounded-lg border"
-					>
-						<div class="flex items-center gap-4">
-							<span class="px-2 py-1 rounded text-xs font-medium" :class="getTypeColor(record.type)">
-								{{ record.type }}
-							</span>
-							<div>
-								<p class="font-medium">{{ record.name }}</p>
-								<p class="text-sm text-muted-foreground truncate max-w-md">{{ record.content }}</p>
-							</div>
-						</div>
-						<div class="flex items-center gap-4">
-							<span
-								class="px-2 py-1 rounded text-xs"
-								:class="record.proxied ? 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300' : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'"
-							>
-								{{ record.proxied ? '代理' : 'DNS' }}
-							</span>
-							<ArrowDownRightIcon class="h-4 w-4 text-muted-foreground" />
-						</div>
-					</div>
-				</div>
-			</CardContent>
-			<CardFooter v-if="filteredRecords.length > 0">
-				<p class="text-sm text-muted-foreground">
-					显示 {{ filteredRecords.length }} 条记录，共 {{ dnsRecords.length }} 条
-				</p>
-			</CardFooter>
-		</Card>
 	</div>
 </template>
